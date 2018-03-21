@@ -1,0 +1,14 @@
+.button {
+	border-radius: 15px;
+	background-color: #bbbbff;
+	color: #FFF;
+	padding: 15px 25px 15px 25px;
+	font-size: 14pt;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.button:HOVER {
+	background-color: #fff;
+	color: #bbbbff;
+}

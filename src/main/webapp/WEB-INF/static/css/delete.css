@@ -1,0 +1,44 @@
+#progress {
+	border-radius: 15px;
+	border: 1px sold #ddd;
+}
+
+#progress ul {
+	padding: 0px;
+	margin: 0px;
+}
+
+#progress li {
+	display: inline-block;
+	padding: 15px;
+	border-right: 1px solid #ddd;
+	border-top-right-radius: 45%;
+	border-bottom-right-radius: 45%;
+}
+
+#process li:first-child {
+	border-top-left-radius: 15px;
+	border-bottom-left-radius: 15px;
+}
+
+#progress li:last-child {
+	border-right: none;
+}
+
+#progress li.active {
+	background-color: #077aff;
+	color: #fff;
+	font-weight: bold; /* 굵게 표현해라 */
+}
+
+.box {
+	background-color: #f3f3f3;
+}
+
+#myCommunities{
+	cursor: pointer;
+}
+
+#myCommunities:hover{
+	text-decoration: underline;
+}

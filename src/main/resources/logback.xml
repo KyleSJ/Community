@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+    <!--						 병렬처리시에 사용/  	    /클래스나 메소드명  / 로그 내용-->
+      <pattern> >> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+  
+  <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>C:/Users/성쟈/Documents/log/logFile.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>C:/Users/성쟈/Documents/log/logFile.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+
+      <!-- keep 30 days' worth of history capped at 3GB total size -->
+      <maxHistory>30</maxHistory>
+      <!-- <totalSizeCap>3GB</totalSizeCap> -->
+
+    </rollingPolicy>
+
+    <encoder>
+      <pattern> >> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender> 
+  
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>C:/Users/성쟈/Documents/log/myApp.log</file>
+
+    <encoder>
+      <pattern> >> %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+	<!-- 개발할 때 debug, 운영시엔 info를 주로 쓴다. -->
+  <root level="debug">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+    <appender-ref ref="ROLLING_FILE" />
+  </root>
+</configuration>

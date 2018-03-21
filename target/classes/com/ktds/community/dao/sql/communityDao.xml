@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- interface의 이름을 적어준다 -->
+<mapper namespace = "CommunityDao">
+	<resultMap type="CommunityVO" id="CommunityVOMap">
+		<id column="ID" property="id"/>
+		<result column="TITLE" property="title"/>
+		<result column="BODY" property="body"/>
+		<result column="USER_ID" property="userId"/>
+		<result column="WRITE_DATE" property="writeDate"/>
+		<result column="VIEW_COUNT" property="viewCount"/>
+		<result column="RECOMMEND_COUNT" property="recommendCount"/>
+		<result column="REQUEST_IP" property="requestIp"/>
+		<result column="DISPLAY_FILE_NAME" property="displayFilename"/>
+		<!-- 결과를 다른 객체에 할 --> <!-- property : communityVO에서의 변수 javaType : alias등록된 MemberVO  -->
+		<association property="memberVO" javaType="MemberVO">
+			<result column="M_ID" property="id"/>
+			<result column="EMAIL" property="email"/>
+			<result column="NICKNAME" property="nickname"/>
+			<result column="REGIST_DATE" property="registDate"/>
+		</association>
+	</resultMap>
+
+<!-- 수행할 함수명  resultType : 결과값을 담아줄 VO -->
+	<select id="selectAll" resultMap="CommunityVOMap">
+		
+		SELECT	C.ID 
+				, C.TITLE
+				, C.BODY
+				, C.USER_ID 
+				, TO_CHAR(C.WRITE_DATE, 'YYYY-MM-DD HH12:MI:SS') WRITE_DATE
+				, C.VIEW_COUNT
+				, C.RECOMMEND_COUNT 
+				, C.REQUEST_IP 
+				, C.DISPLAY_FILE_NAME 
+                , M.ID M_ID
+                , M.EMAIL
+                , M.NICKNAME
+                , M.REGIST_DATE
+		FROM		COMMUNITY C
+				, MEMBER M
+		WHERE	C.USER_ID = M.ID(+)
+		ORDER BY C.ID DESC
+	</select>
+	
+	<insert id="insertCommunity" parameterType="CommunityVO">
+	
+		INSERT	INTO COMMUNITY (
+				ID
+				, TITLE
+				, BODY
+				, USER_ID
+				, WRITE_DATE
+				, VIEW_COUNT
+				, RECOMMEND_COUNT
+				, REQUEST_IP
+				, DISPLAY_FILE_NAME
+		)
+		VALUES	(
+				COMMUNITY_ID_SEQ.NEXTVAL
+				, #{title}
+				, #{body}
+				, #{userId}
+				, SYSDATE
+				, 0
+				, 0
+				, #{requestIp}
+				, #{displayFilename}
+		)
+	
+	</insert>
+
+	<update id="incrementViewCount" parameterType="_int">
+	
+		UPDATE	COMMUNITY
+		SET		VIEW_COUNT = VIEW_COUNT + 1
+		WHERE	ID = #{id}
+	
+	</update>
+	
+	<update id="incrementRecoomendCount" parameterType="_int">
+	
+		UPDATE	COMMUNITY
+		SET		RECOMMEND_COUNT = RECOMMEND_COUNT + 1
+		WHERE	ID = #{id}
+	
+	</update>
+	
+	<select id="selectOne" parameterType="_int" resultMap="CommunityVOMap">
+		
+		SELECT	C.ID 
+				, C.TITLE
+				, C.BODY
+				, C.USER_ID 
+				, TO_CHAR(C.WRITE_DATE, 'YYYY-MM-DD HH12:MI:SS') WRITE_DATE
+				, C.VIEW_COUNT
+				, C.RECOMMEND_COUNT 
+				, C.REQUEST_IP 
+				, C.DISPLAY_FILE_NAME 
+                , M.ID M_ID
+                , M.EMAIL
+                , M.NICKNAME
+                , M.REGIST_DATE
+		FROM		COMMUNITY C
+				, MEMBER M
+		WHERE	C.USER_ID = M.ID(+)
+		AND		C.ID = #{id}	
+		
+	</select>
+	
+	<delete id="deleteOne" parameterType="hashmap">
+	
+		DELETE
+		FROM		COMMUNITY
+		WHERE	ID = #{id}
+		
+	</delete>
+	
+	<delete id="deleteMemberCommunity" parameterType="_int">
+	
+		DELETE
+		FROM		COMMUNITY
+		WHERE	USER_ID = #{id}
+	
+	</delete>
+	
+	<update id="updateCommunity" parameterType="CommunityVO">
+	
+		UPDATE	COMMUNITY
+		SET		WRITE_DATE = SYSDATE
+				<if test="requestIp != null and requestIp != '' ">
+				, REQUEST_IP = #{requestIp}
+				</if>
+				<if test="title != null and title != '' ">
+				, TITLE = #{title}
+				</if>
+				, DISPLAY_FILE_NAME = #{displayFilename}
+				<if test="body != null and body != '' ">
+				, BODY = #{body}
+				</if>
+		WHERE	ID = #{id}
+		AND		USER_ID = #{userId}
+		
+	</update>
+	
+	<select id="selectMyCommunitiesCount" resultType="_int" parameterType="_int">
+	
+		SELECT	COUNT(ID)
+		FROM		COMMUNITY
+		WHERE	USER_ID = #{userId}
+	
+	</select>
+	
+	<select id="selectMyCommunities" resultMap="CommunityVOMap" parameterType="_int">
+		
+		SELECT	C.ID 
+				, C.TITLE
+				, C.BODY
+				, C.USER_ID 
+				, TO_CHAR(C.WRITE_DATE, 'YYYY-MM-DD HH12:MI:SS') WRITE_DATE
+				, C.VIEW_COUNT
+				, C.RECOMMEND_COUNT 
+				, C.REQUEST_IP 
+				, C.DISPLAY_FILE_NAME 
+                , M.ID M_ID
+                , M.EMAIL
+                , M.NICKNAME
+                , M.REGIST_DATE
+		FROM		COMMUNITY C
+				, MEMBER M
+		WHERE	C.USER_ID = M.ID
+		AND		C.USER_ID = #{userId}
+			
+	</select>
+
+	<delete id="deleteCommunities" parameterType="map">
+		DELETE
+		FROM		COMMUNITY
+		WHERE	USER_ID = #{userId}
+		AND		ID IN
+		<foreach collection="ids" item="id" open="(" close=")" separator=",">
+			#{id}
+		</foreach>
+	
+	</delete>
+</mapper>
