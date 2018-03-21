@@ -12,6 +12,15 @@ public class MemberVO {
 	@NotEmpty(message = "비밀번호는 필수 입력값입니다.")
 	private String password;
 	private String registDate;
+	private String salt;
+	
+	public String getSalt() {
+		return salt;
+	}
+	
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
 
 	public int getId() {
 		return id;

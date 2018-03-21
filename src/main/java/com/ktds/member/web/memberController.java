@@ -1,5 +1,7 @@
 package com.ktds.member.web;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community.service.CommunityService;
@@ -32,6 +35,31 @@ public class memberController {
 	
 	public void setMemberService(MemberService memberService) {
 		this.memberService = memberService;
+	}
+	
+	//ajax
+	@RequestMapping("/api/exists/email")
+	@ResponseBody //JSON 형태로 보내지게된다 , 쓸려면 의존라이브러리 추가해야됨!
+	public Map<String, Boolean> apiIsExistsEmail(@RequestParam String email){
+		
+		boolean isExists = memberService.readCountMemberEmail(email);
+		
+		Map<String, Boolean> response = new HashMap<String, Boolean>();
+		response.put("response", isExists);
+		
+		return response;
+	}
+	
+	@RequestMapping("/api/exists/nickname")
+	@ResponseBody
+	public Map<String, Boolean> apiIsExistsNickname(@RequestParam String nickname){
+		
+		boolean isExists = memberService.readCountMemberNickname(nickname);
+		
+		Map<String, Boolean> response = new HashMap<String, Boolean>();
+		response.put("response", isExists);
+		
+		return response;
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.GET)

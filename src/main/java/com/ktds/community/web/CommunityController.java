@@ -33,7 +33,7 @@ public class CommunityController {
 	public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}
-
+ 
 	@RequestMapping("/")
 	public ModelAndView list(HttpSession session) {
 

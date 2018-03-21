@@ -15,6 +15,7 @@
 	src="<c:url value="/static/js/jquery-3.3.1.min.js"/>"></script>
 <script type="text/javascript">
 	$().ready(function() {
+		
 		$("#registBtn").click(function() {
 
 			if ($("#email").val() == "") {
@@ -36,19 +37,66 @@
 				return false;
 			}
 			
-			console.log("if문 다 통과")
-			
-			$("#registForm").attr({
-				"method" : "post" ,
-				"action" : "<c:url value="/regist" />"
-			}).submit();
+			if( $("#email").hasClass("invalid") ){
+				alert("작성한 email은 사용할 수 없습니다.");
+				$("#email").focus();
+				return false;
+			} else{
+				$.post("<c:url value="/api/exists/email"/>" , {
+					email: $("#email").val()
+				} , function(response) {
+					console.log(response.response)
+					if(response.response){
+						alert("email이 중복되었습니다!");
+						$("#email").removeClass("valid");
+						$("#email").addClass("invalid");
+						return false;
+					} else{
+						$("#email").removeClass("invalid");
+						$("#email").addClass("valid");
+						
+						$.post("<c:url value="/api/exists/nickname"/>",{
+							nickname : $("#nickname").val()
+						},function(response){
+							console.log(response.response)
+							if(response.response){
+								alert("닉네임이 중복됩니다!");
+								$("#nickname").focus();
+								$("#nickname").removeClass("valid");
+								$("#nickname").addClass("invalid");
+								return false;
+							}else{
+								$("#nickname").removeClass("invalid");
+								$("#nickname").addClass("valid");
+								
+								$("#registForm").attr({
+									"method" : "post" ,
+									"action" : "<c:url value="/regist" />"
+								}).submit();
+							}
+						})
+					}
+				})
+			}
 		});
 
 		$("#email").keyup(function() {
 			var value = $(this).val();
 			if (value != "") {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				
+				//Ajax Call (http://localhost:8080/api/exists/email)
+				$.post("<c:url value="/api/exists/email"/>" , {
+					email: value
+				} , function(response) {
+					console.log(response.response)
+					if(response.response){
+						$("#email").removeClass("valid");
+						$("#email").addClass("invalid");
+					} else{
+						$("#email").removeClass("invalid");
+						$("#email").addClass("valid");
+					}
+				})
 			} else {
 				$(this).removeClass("valid");
 				$(this).addClass("invalid");
@@ -58,8 +106,20 @@
 		$("#nickname").keyup(function() {
 			var value = $(this).val();
 			if (value != "") {
-				$(this).removeClass("invalid");
-				$(this).addClass("valid");
+				
+				$.post("<c:url value="/api/exists/nickname"/>",{
+					nickname : $("#nickname").val()
+				},function(response){
+					console.log(response.response);
+					if(response.response){
+						$("#nickname").focus();
+						$("#nickname").removeClass("valid");
+						$("#nickname").addClass("invalid");
+					}else{
+						$("#nickname").removeClass("invalid");
+						$("#nickname").addClass("valid");
+					}
+				})
 			} else {
 				$(this).removeClass("valid");
 				$(this).addClass("invalid");

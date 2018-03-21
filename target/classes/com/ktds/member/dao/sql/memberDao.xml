@@ -4,6 +4,19 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- interface의 이름을 적어준다 -->
 <mapper namespace = "MemberDao">
+	
+	<select id="selectCountMemberEmail" parameterType="string" resultType="_int">
+		SELECT	COUNT(ID)
+		FROM		MEMBER
+		WHERE	EMAIL = #{email}
+	
+	</select>
+	
+	<select id="selectCountMemberNickname" parameterType="string" resultType="_int">
+		SELECT	COUNT(ID)
+		FROM		MEMBER
+		WHERE	NICKNAME = #{nickname}
+	</select>
 
 	<insert id="insertMember" parameterType="MemberVO">
 		INSERT	INTO MEMBER (
@@ -12,6 +25,7 @@
 			, NICKNAME
 			, PASSWORD
 			, REGIST_DATE
+			, SALT
 		)
 		
 		VALUES(
@@ -19,7 +33,8 @@
 			, #{email}
 			, #{nickname}
 			, #{password}
-			, SYSDATE 
+			, SYSDATE
+			, #{salt} 
 		)
 	
 	</insert>
@@ -29,6 +44,7 @@
 				, EMAIL
 				, NICKNAME
 				, REGIST_DATE registDate
+				, SALT
 		FROM		MEMBER
 		WHERE	EMAIL = #{email}
 		AND		PASSWORD = #{password}
@@ -42,6 +58,14 @@
 		WHERE	ID = #{id}
 	
 	</delete>
+	
+	<select id="selectSalt" parameterType="string" resultType="string">
+	
+		SELECT	NVL(SALT, '')
+		FROM		MEMBER
+		WHERE	EMAIL= #{email}
+	
+	</select>
 	
 
 </mapper>
