@@ -6,13 +6,19 @@ import java.util.Map;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
 
 public class CommunityDaoImplForOracle extends SqlSessionDaoSupport implements CommunityDao{
+	
+	@Override
+	public int selectCountAll(CommunitySearchVO communitySearchVO) {
+		return getSqlSession().selectOne("CommunityDao.selectCountAll", communitySearchVO);
+	}
 
 	@Override
-	public List<CommunityVO> selectAll() {
-		return getSqlSession().selectList("CommunityDao.selectAll");
+	public List<CommunityVO> selectAll(CommunitySearchVO communitySearchVO) {
+		return getSqlSession().selectList("CommunityDao.selectAll", communitySearchVO);
 	}
 
 	@Override

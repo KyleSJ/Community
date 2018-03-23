@@ -12,7 +12,7 @@ img {
 }
 </style>
 </head>
-<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="<c:url value="/static/js/jquery-3.3.1.min.js"/>"></script>
 <script type="text/javascript">
 	$().ready(function() {
 		$("#logout").click(function() {
@@ -24,6 +24,9 @@ img {
 
 	<div id="wrapper">
 		<jsp:include page="/WEB-INF/view/template/menu.jsp" />
+		<div>
+			${pageExplorer.totalCount }건의 게시글이 검색되었습니다.
+		</div>
 		<table>
 			<tr>
 				<th>ID</th>
@@ -33,7 +36,7 @@ img {
 				<th>조회수</th>
 				<th>추천수</th>
 			</tr>
-			<c:forEach items="${communityList }" var="list">
+			<c:forEach items="${pageExplorer.list }" var="list">
 				<tr>
 
 					<td>${list.id }</td>
@@ -58,7 +61,12 @@ img {
 				</tr>
 			</c:forEach>
 		</table>
-		<c:if test="${empty communityList}">
+		
+		<form id="searchForm">
+			${pageExplorer.make()}
+		</form>
+		
+		<c:if test="${empty pageExplorer.list}">
 			<tr>
 				<td colspan="5">등록된 게시글이 없습니다.</td>
 			</tr>

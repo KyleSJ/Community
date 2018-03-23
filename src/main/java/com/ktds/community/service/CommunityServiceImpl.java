@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ktds.community.dao.CommunityDao;
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
+
+import io.github.seccoding.web.pager.Pager;
+import io.github.seccoding.web.pager.PagerFactory;
+import io.github.seccoding.web.pager.explorer.ClassicPageExplorer;
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 public class CommunityServiceImpl implements CommunityService {
 
@@ -15,8 +21,19 @@ public class CommunityServiceImpl implements CommunityService {
 	}
 
 	@Override
-	public List<CommunityVO> getAll() {
-		return communityDao.selectAll();
+	public PageExplorer getAll(CommunitySearchVO communitySearchVO) {
+		
+		Pager pager = PagerFactory.getPager(Pager.ORACLE, communitySearchVO.getPageNo() + "", communityDao.selectCountAll(communitySearchVO));
+		
+		/*
+		 * List Page Explorer
+		 * Classic Page Explorer
+		 * 조회해야하는 게시글 시작번호, 끝 번호 등을 넘겨준다.
+		*/
+		PageExplorer pageExplorer = pager.makePageExplorer(ClassicPageExplorer.class, communitySearchVO);
+		pageExplorer.setList(communityDao.selectAll(communitySearchVO));
+		
+		return pageExplorer;
 	}
 
 	@Override

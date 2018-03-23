@@ -24,25 +24,46 @@
 	</resultMap>
 
 <!-- 수행할 함수명  resultType : 결과값을 담아줄 VO -->
-	<select id="selectAll" resultMap="CommunityVOMap">
-		
-		SELECT	C.ID 
-				, C.TITLE
-				, C.BODY
-				, C.USER_ID 
-				, TO_CHAR(C.WRITE_DATE, 'YYYY-MM-DD HH12:MI:SS') WRITE_DATE
-				, C.VIEW_COUNT
-				, C.RECOMMEND_COUNT 
-				, C.REQUEST_IP 
-				, C.DISPLAY_FILE_NAME 
-                , M.ID M_ID
-                , M.EMAIL
-                , M.NICKNAME
-                , M.REGIST_DATE
+	
+	<!-- count 쿼리와 아래 selectAll 쿼리의 from, wehere의 내용은 항상 같아야 한다!!! -->
+	<select id="selectCountAll" resultType="_int" parameterType="CommunitySearchVO">
+		SELECT	COUNT(C.ID)
 		FROM		COMMUNITY C
 				, MEMBER M
 		WHERE	C.USER_ID = M.ID(+)
-		ORDER BY C.ID DESC
+	</select>
+
+	<select id="selectAll" resultMap="CommunityVOMap" parameterType="CommunitySearchVO">
+		SELECT	*
+		FROM		(
+				SELECT	ROWNUM RNUM
+						, C.*
+				FROM		(
+						SELECT	C.ID 
+								, C.TITLE
+								, C.BODY
+								, C.USER_ID 
+								, TO_CHAR(C.WRITE_DATE, 'YYYY-MM-DD HH12:MI:SS') WRITE_DATE
+								, C.VIEW_COUNT
+								, C.RECOMMEND_COUNT 
+								, C.REQUEST_IP 
+								, C.DISPLAY_FILE_NAME 
+				                , M.ID M_ID
+				                , M.EMAIL
+				                , M.NICKNAME
+				                , M.REGIST_DATE
+						FROM		COMMUNITY C
+								, MEMBER M
+						WHERE	C.USER_ID = M.ID(+)
+						ORDER BY C.ID DESC
+				) C
+				WHERE	ROWNUM <![CDATA[ <= ]]> #{endNumber}
+		)
+		WHERE RNUM <![CDATA[ >= ]]> #{startNumber}
+		
+		
+		
+		
 	</select>
 	
 	<insert id="insertCommunity" parameterType="CommunityVO">

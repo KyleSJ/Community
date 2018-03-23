@@ -2,11 +2,14 @@ package com.ktds.community.dao;
 
 import java.util.List;
 
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
 
 public interface CommunityDao {
 	
-	public List<CommunityVO> selectAll();
+	public int selectCountAll(CommunitySearchVO communitySearchVO);
+	
+	public List<CommunityVO> selectAll(CommunitySearchVO communitySearchVO);
 	
 	public int insertCommunity(CommunityVO communityVO);
 	

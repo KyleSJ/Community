@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ktds.community.service.CommunityService;
+import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
 import com.ktds.member.constants.Member;
 import com.ktds.member.vo.MemberVO;
 import com.ktds.util.DownloadUtil;
+
+import io.github.seccoding.web.pager.explorer.PageExplorer;
 
 @Controller
 public class CommunityController {
@@ -35,13 +38,13 @@ public class CommunityController {
 	}
  
 	@RequestMapping("/")
-	public ModelAndView list(HttpSession session) {
+	public ModelAndView list(CommunitySearchVO communitySearchVO) {
 
 		ModelAndView view = new ModelAndView();
 		view.setViewName("community/list");
 
-		List<CommunityVO> communityList = communityService.getAll();
-		view.addObject("communityList", communityList);
+		PageExplorer pageExplorer = communityService.getAll(communitySearchVO);
+		view.addObject("pageExplorer", pageExplorer);
 
 		return view;
 	}
@@ -99,11 +102,11 @@ public class CommunityController {
 		ModelAndView view = new ModelAndView();
 		view.setViewName("community/detail");
 
-		CommunityVO detail = communityService.getOne(id);
+		CommunityVO community = communityService.getOne(id);
 		boolean isLast = communityService.isLastId(id);
 		view.addObject("isLast", isLast);
-		if (detail != null) {
-			view.addObject("detail", detail);
+		if (community != null) {
+			view.addObject("community", community);
 		}
 		return view;
 	}
