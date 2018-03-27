@@ -13,7 +13,7 @@ public class ActionHistoryServiceImpl implements ActionHistoryService {
 
 	@Override
 	public boolean createActionHistory(ActionHistoryVO actionHistoryVO) {
-		return actionHistoryDao.insertAvctionHistory(actionHistoryVO) > 0;
+		return actionHistoryDao.insertActionHistory(actionHistoryVO) > 0;
 	}
 
 }

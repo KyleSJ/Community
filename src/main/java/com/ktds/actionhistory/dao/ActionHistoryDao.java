@@ -4,6 +4,6 @@ import com.ktds.actionhistory.vo.ActionHistoryVO;
 
 public interface ActionHistoryDao {
 	
-	public int insertAvctionHistory(ActionHistoryVO actionHistoryVO);
+	public int insertActionHistory(ActionHistoryVO actionHistoryVO);
 
 }

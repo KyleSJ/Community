@@ -7,8 +7,8 @@ import com.ktds.actionhistory.vo.ActionHistoryVO;
 public class ActionHistoryDaoImplForMySQL extends SqlSessionDaoSupport implements ActionHistoryDao {
 
 	@Override
-	public int insertAvctionHistory(ActionHistoryVO actionHistoryVO) {
-		return getSqlSession().insert("actionHistoryDao.insertAvctionHistory", actionHistoryVO);
+	public int insertActionHistory(ActionHistoryVO actionHistoryVO) {
+		return getSqlSession().insert("ActionHistoryDao.insertActionHistory", actionHistoryVO);
 	}
 
  

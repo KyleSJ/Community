@@ -59,7 +59,7 @@
 	<!-- mysql DB 설 -->
 	<bean	id="mysqlDataSource" class="org.apache.commons.dbcp.BasicDataSource">
 		<property	name="driverClassName" value="com.mysql.jdbc.Driver"	/>
-		<property	name="url"	value="jdbc:oracle:thin:@localhost:3306/sys" />
+		<property	name="url"	value="jdbc:mysql://localhost:3306/sys?serverTimezone=UTC" />
 		<property	name="username" value="history" />
 		<property	name="password"	value="history" />
 	</bean>
@@ -83,7 +83,7 @@
 	</bean>
 	
 	<!-- Rollback 규칙 설정 -->
-	<tx:advice id="mysqlRollbackRule"	transaction-manager="transactionManager">
+	<tx:advice id="mysqlRollbackRule"	transaction-manager="mysqlTransactionManager">
 		<tx:attributes>
 			<tx:method name="create*" rollback-for="RuntimeException"/>
 			<tx:method name="read*" rollback-for="RuntimeException"/>

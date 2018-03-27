@@ -9,15 +9,19 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community.service.CommunityService;
 import com.ktds.member.constants.Member;
 import com.ktds.member.service.MemberService;
@@ -73,8 +77,14 @@ public class memberController {
 	}
 	
 	@RequestMapping(value = "/login", method=RequestMethod.POST)
-	public String doLoginActioin(MemberVO memberVO, HttpServletRequest request) {
+	public String doLoginActioin(MemberVO memberVO, HttpServletRequest request
+						, @RequestAttribute ActionHistoryVO actionHistory) {
 		HttpSession session = request.getSession();
+		
+		//로그인 시도 log 저장
+		actionHistory.setReqType(ActionHistory.ReqType.MEMBER);
+		String log = String.format(ActionHistory.Log.LOGIN, memberVO.getEmail());
+		actionHistory.setLog(log);
 		
 		MemberVO member = memberService.readMember(memberVO);
 		
@@ -93,7 +103,13 @@ public class memberController {
 	}
 
 	@RequestMapping("/logout")
-	public String doLogOut(HttpSession session) {
+	public String doLogOut(HttpSession session, @RequestAttribute ActionHistoryVO actionHistory) {
+		
+		MemberVO member = (MemberVO) session.getAttribute(Member.USER);
+		
+		actionHistory.setReqType(ActionHistory.ReqType.MEMBER);
+		String log = String.format(ActionHistory.Log.LOGOUT, member.getEmail());
+		actionHistory.setLog(log);
 		
 		session.invalidate();
 		
@@ -111,18 +127,29 @@ public class memberController {
 	}
 	
 	@RequestMapping(value="/regist", method = RequestMethod.POST)
-	public ModelAndView doRegistAction(@ModelAttribute("registForm") @Valid MemberVO memberVO, Errors errors) {
+	public String doRegistAction(@ModelAttribute("registForm") @Valid MemberVO memberVO, Errors errors, HttpServletRequest request, Model model) {
 		
 		System.out.println("regist call");
 		if(errors.hasErrors()) {
-			return new ModelAndView("member/regist");
+			return "member/regist";
 		}
+		
+		ActionHistoryVO history = (ActionHistoryVO) request.getAttribute("actionHistory");
+		history.setReqType(ActionHistory.ReqType.MEMBER);
+		history.setIp(request.getRemoteAddr());
+		
 		
 		if(memberService.createMember(memberVO)) {
-			return new ModelAndView("redirect:/login");
+			String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname(), true);
+			history.setLog(log);
+			model.addAttribute("actionHistory", history);
+			return "redirect:/login";
 		}
 		
-		return new ModelAndView("redirect:/regist");
+		String log = String.format(ActionHistory.Log.REGIST, memberVO.getEmail(), memberVO.getNickname(), false);
+		history.setLog(log);
+		model.addAttribute("actionHistory", history);
+		return "redirect:/regist";
 	}
 	
 	@RequestMapping("/delete/process1")

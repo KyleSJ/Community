@@ -2,7 +2,6 @@ package com.ktds.community.web;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ktds.actionhistory.vo.ActionHistory;
+import com.ktds.actionhistory.vo.ActionHistoryVO;
 import com.ktds.community.service.CommunityService;
 import com.ktds.community.vo.CommunitySearchVO;
 import com.ktds.community.vo.CommunityVO;
@@ -158,8 +160,12 @@ public class CommunityController {
 	}
 
 	@RequestMapping("/recommend/{id}")
-	public String doRecommend(HttpSession session, @PathVariable int id) {
+	public String doRecommend(HttpSession session, @PathVariable int id, @RequestAttribute ActionHistoryVO actionHistory) {
 
+		MemberVO member = (MemberVO) session.getAttribute(Member.USER);
+		actionHistory.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log = String.format(ActionHistory.Log.RECOMMEND, member.getEmail() );
+		actionHistory.setLog(log);
 		if (communityService.increaseRecommendCount(id)) {
 			return "redirect:/detail/" + id;
 		}
@@ -203,10 +209,13 @@ public class CommunityController {
 	@RequestMapping(value="/modify/{id}", method=RequestMethod.POST)
 	public String doModifyAction(@PathVariable int id, HttpSession session,
 								HttpServletRequest request,
-								@ModelAttribute("writeForm") @Valid CommunityVO communityVO,  Errors errors) {
+								@ModelAttribute("writeForm") @Valid CommunityVO communityVO,  Errors errors,
+								@RequestAttribute ActionHistoryVO actionHistory) {
 		
 		MemberVO member = (MemberVO) session.getAttribute(Member.USER);
 		CommunityVO originalVO = communityService.getOne(id);
+		String asIs = actionHistory.getAsIs();
+		String toBe = actionHistory.getToBe();
 		
 		if( member.getId() == originalVO.getId() ) {
 			return "error/404";
@@ -227,16 +236,22 @@ public class CommunityController {
 		if( !ip.equals(originalVO.getRequestIp()) ){
 			newCommunity.setRequestIp(ip);
 			isModify = true;
+			asIs += "IP : " + originalVO.getRequestIp();
+			toBe += "IP : " + ip;
 		}
 		// 2. 제목 변경 확인
 		if( !originalVO.getTitle().equals( communityVO.getTitle() ) ) {
 			newCommunity.setTitle( communityVO.getTitle() );
 			isModify = true;
+			asIs += "Title : " + originalVO.getTitle() + "<br/>";
+			toBe += "Title : " + communityVO.getTitle() + "<br/>";
 		}
 		// 3. 내용 변경 확인
 		if( !originalVO.getBody().equals( communityVO.getBody()) ) {
 			newCommunity.setBody( communityVO.getBody() );
 			isModify = true;
+			asIs += "Body : " + originalVO.getBody() + "<br/>";
+			toBe += "Body : " + communityVO.getBody() + "<br/>";
 		}
 		// 4. 파일 변경 확인
 		if( communityVO.getDisplayFilename().length() > 0 ) {
@@ -252,7 +267,13 @@ public class CommunityController {
 		if( !originalVO.getDisplayFilename().equals( communityVO.getDisplayFilename() ) ) {
 			newCommunity.setDisplayFilename( communityVO.getDisplayFilename() );
 			isModify = true;
+			asIs += "File : " + originalVO.getDisplayFilename() + "<br/>";
+			toBe += "File : " + communityVO.getDisplayFilename() + "<br/>";
 		}
+		
+		actionHistory.setReqType(ActionHistory.ReqType.COMMUNITY);
+		String log = String.format(ActionHistory.Log.UPDATE, originalVO.getTitle(), originalVO.getBody());
+		actionHistory.setLog(log);
 		
 		if( isModify ) {
 			communityService.updateCommunity( newCommunity );

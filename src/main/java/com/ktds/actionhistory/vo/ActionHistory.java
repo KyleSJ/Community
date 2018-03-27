@@ -13,7 +13,8 @@ public interface ActionHistory {
 	static public interface Log{
 		public static final String VIEW = "View : %s, Method : %s";
 		public static final String LOGIN = "LOGIN : %s";
-		public static final String REGIST = "REGIST : Email(%s), Nickname(%s)";
+		public static final String LOGOUT = "LOGOUT : %s";
+		public static final String REGIST = "REGIST : Email(%s), Nickname(%s), Result(%s)";
 		public static final String WRITE = "Write : Subject(%s), Body(%s)";
 		public static final String UPDATE = "Update : Subject(%s), Body(%s)";
 		public static final String DELETE = "Delete : Id(%d), Subject(%s), Body(%s)";
@@ -23,5 +24,4 @@ public interface ActionHistory {
 		public static final String DOWNLOAD = "Download : CommunityID(%d), Filename(%s)";
 		public static final String UPLOAD = "Upload : Filename(%s)";
 	}
-	
 }
