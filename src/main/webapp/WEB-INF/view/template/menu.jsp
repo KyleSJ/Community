@@ -29,6 +29,6 @@ ul {
 			<li><a id="delete" href="<c:url value="/delete/process1" />">회원
 					탈퇴</a></li>
 		</c:if>
-		<li><a href="<c:url value="/"/>">Community</a></li>
+		<li><a href="<c:url value="/reset"/>">Community</a></li>
 	</ul>
 </div>

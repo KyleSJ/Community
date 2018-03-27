@@ -5,13 +5,15 @@ import io.github.seccoding.web.pager.annotations.StartRow;
 
 public class CommunitySearchVO {
 
-	private int pageNo;
-	
+	private int pageNo = -1;
 	@StartRow // Pager와 annotation Package에 있는 코드들로 인해 자동으로 지정해준다.
 	private int startNumber;
-	
+
 	@EndRow
 	private int endNumber;
+
+	private int searchType;
+	private String searchKeyword;
 
 	public int getPageNo() {
 		return pageNo;
@@ -35,6 +37,22 @@ public class CommunitySearchVO {
 
 	public void setEndNumber(int endNumber) {
 		this.endNumber = endNumber;
+	}
+
+	public int getSearchType() {
+		return searchType;
+	}
+
+	public void setSearchType(int searchType) {
+		this.searchType = searchType;
+	}
+
+	public String getSearchKeyword() {
+		return searchKeyword;
+	}
+
+	public void setSearchKeyword(String searchKeyword) {
+		this.searchKeyword = searchKeyword;
 	}
 
 }

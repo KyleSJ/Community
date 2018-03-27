@@ -120,52 +120,13 @@ $().ready(function() {
    </div>
    
    <p>
-      <a href="<c:url value="/"/>">뒤로가기</a>
+      <a href="<c:url value="/"/>">목록으로</a>
       <a href="<c:url value="/recommend/${community.id}"/>">추천하기</a>
       <c:if test="${community.memberVO.id == sessionScope.__USER__.id }">         
          <a href="<c:url value="/modify/${community.id}"/>">수정하기</a>
          <a href="<c:url value="/delete/${community.id}"/>">삭제하기</a>
       </c:if>
    </p>
-   <%-- 
-   
-	<a href="<c:url value="/recommend/${community.id }"/>">추천하기</a>
-	<div>제목 : ${community.title}</div>
-	<div>사용자 명 :
-	<c:choose>
-	<c:when test="${not empty community.memberVO }">
-	${community.memberVO.nickname}(${community.memberVO.email })
-	</c:when>
-	<c:otherwise>
-	탈퇴한 사용자입니다.
-	</c:otherwise>
-	</c:choose>
-	</div>
-	<div>작성일 : ${community.writeDate }</div>
-
-	<c:if test="${not empty community.displayFilename }">
-		<div>
-			파일이름 : <a href="<c:url value="/get/${community.id}" />">
-				${community.displayFilename }</a>
-		</div>
-	</c:if>
-	<div>내용 : ${community.body}</div>
-	
-	
-	
-	<div>조회소 : ${community.viewCount }</div>
-	<div>추천수 : ${community.recommendCount }</div>
-	<c:if test="${community.id > 1 }">
-		<a href="<c:url value="/detail/${community.id - 1 }"/>">이전</a>
-	</c:if>
-	<a href="<c:url value="/"/>">목록</a>
-	<c:if test="${not isLast }">
-		<a href='<c:url value="/detail/${community.id + 1 }"/>'>다음</a>
-	</c:if>
-	<c:if test="${sessionScope.__USER__.id == community.memberVO.id }">
-	<a href="<c:url value="/modify/${community.id}"/>">수정하기</a>
-	<a href="<c:url value="/remove/${community.id}"/>">삭제하기</a>
-	</c:if> --%>
 </div>
 </body>
 </html>

@@ -36,15 +36,37 @@ public class CommunityController {
 	public void setCommunityService(CommunityService communityService) {
 		this.communityService = communityService;
 	}
+	
+	@RequestMapping("/reset")
+	public String viewInListPage(HttpSession session) {
+			session.removeAttribute("__SEARCH__");
+			return "redirect:/";
+	}
  
 	@RequestMapping("/")
-	public ModelAndView list(CommunitySearchVO communitySearchVO) {
+	public ModelAndView viewListPage(CommunitySearchVO communitySearchVO, HttpSession session) {
+		
+		//Data가 안 넘어 왔을 경우
+		// 1. 리스트페이지에 처음 접근 했을 때
+		// 2. 글 내용 보기에서 목록보기로 왔을 때
+		if( communitySearchVO.getPageNo() < 0 ) {
+			//session에 저장된 communitySearchVO를 가져옴.
+			communitySearchVO = (CommunitySearchVO) session.getAttribute("__SEARCH__");
+			//session에 저장된 CommunitySearchVO가 없을 경우 pageNo를 0으로 초기화.
+			if( communitySearchVO == null) {
+				communitySearchVO = new CommunitySearchVO();
+				communitySearchVO.setPageNo(0);
+			}
+		}
+		
+		session.setAttribute("__SEARCH__", communitySearchVO);
 
 		ModelAndView view = new ModelAndView();
 		view.setViewName("community/list");
 
 		PageExplorer pageExplorer = communityService.getAll(communitySearchVO);
 		view.addObject("pageExplorer", pageExplorer);
+		view.addObject("search", communitySearchVO);
 
 		return view;
 	}
@@ -90,7 +112,7 @@ public class CommunityController {
 		communityVO.save();
 		boolean isSuccess = communityService.createCommunity(communityVO);
 		if (isSuccess) {
-			return new ModelAndView("redirect:/");
+			return new ModelAndView("redirect:/reset");
 		} else {
 			return new ModelAndView("redirect:/write");
 		}
